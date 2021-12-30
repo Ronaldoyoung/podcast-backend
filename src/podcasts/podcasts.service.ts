@@ -20,7 +20,7 @@ export class PodcastsService {
   constructor(
     @InjectRepository(Podcast)
     private readonly podcasts: Repository<Podcast>,
-    @InjectRepository(Episode) episodesRepository: Repository<Episode>,
+    @InjectRepository(Episode) episodes: Repository<Episode>,
   ) {}
 
   async allPodcasts(): Promise<PodcastsOutputType> {
@@ -62,20 +62,25 @@ export class PodcastsService {
     } catch {
       return returnFalseWithErrorMessage('Could not find podcast');
     }
-    // return podcast;
   }
 
-  // editPodcast(editPodcastInputType: EditPodcastInputType) {
-  //   const podcast = this.getOnePodcast({
-  //     podcastId: editPodcastInputType.podcastId,
-  //   });
-  //   this.deletePodcast({ podcastId: editPodcastInputType.podcastId });
-  //   this.podcasts.push({
-  //     ...podcast,
-  //     ...editPodcastInputType,
-  //   });
-  //   return true;
-  // }
+  async editPodcast(editPodcastInputType: EditPodcastInputType) {
+    try {
+      const podcast = this.podcasts.findOne(editPodcastInputType.podcastId);
+      if (!podcast) {
+        return returnFalseWithErrorMessage('Podcast not found');
+      }
+      await this.podcasts.save({
+        id: editPodcastInputType.podcastId,
+        ...editPodcastInputType,
+      });
+      return {
+        ok: true,
+      };
+    } catch {
+      return returnFalseWithErrorMessage('Could not edit podcast');
+    }
+  }
 
   // deletePodcast({ podcastId }: PodcastInputType) {
   //   this.getOnePodcast({ podcastId });
