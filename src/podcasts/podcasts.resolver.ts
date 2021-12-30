@@ -1,6 +1,9 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { CreateEpisodeInputType } from './dto/create-episode.dto';
-import { CreatePodcastInputType } from './dto/create-podcast.dto';
+import {
+  CreatePodcastInputType,
+  CreatePodcastOutputType,
+} from './dto/create-podcast.dto';
 import { DeleteEpisodeInputType } from './dto/delete-episode.dto';
 import { DeletePodcastInputType } from './dto/delete-podcast.dto';
 import { EditEpisodeInputType } from './dto/edit-episode.dto';
@@ -21,12 +24,12 @@ export class PodcastsResolver {
     return this.podcastsService.allPodcasts();
   }
 
-  // @Mutation(() => Boolean)
-  // createPodcasts(
-  //   @Args('input') createPodcastInputType: CreatePodcastInputType,
-  // ): boolean {
-  //   return this.podcastsService.createPodcasts(createPodcastInputType);
-  // }
+  @Mutation(() => CreatePodcastOutputType)
+  createPodcast(
+    @Args('input') createPodcastInputType: CreatePodcastInputType,
+  ): Promise<CreatePodcastOutputType> {
+    return this.podcastsService.createPodcast(createPodcastInputType);
+  }
 
   // @Query(() => Podcast)
   // getOnePodcast(@Args('input') podcastId: PodcastInputType) {

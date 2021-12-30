@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { returnFalseWithErrorMessage } from 'src/common/functions/return-false.function';
 import { Repository } from 'typeorm';
 import { CreateEpisodeInputType } from './dto/create-episode.dto';
-import { CreatePodcastInputType } from './dto/create-podcast.dto';
+import {
+  CreatePodcastInputType,
+  CreatePodcastOutputType,
+} from './dto/create-podcast.dto';
 import { DeleteEpisodeInputType } from './dto/delete-episode.dto';
 import { EditEpisodeInputType } from './dto/edit-episode.dto';
 import { EditPodcastInputType } from './dto/edit-podcast.dto';
@@ -16,13 +19,13 @@ import { Podcast } from './entities/podcast.entity';
 export class PodcastsService {
   constructor(
     @InjectRepository(Podcast)
-    private readonly podcastsRepository: Repository<Podcast>,
+    private readonly podcasts: Repository<Podcast>,
     @InjectRepository(Episode) episodesRepository: Repository<Episode>,
   ) {}
 
   async allPodcasts(): Promise<PodcastsOutputType> {
     try {
-      const podcasts = await this.podcastsRepository.find();
+      const podcasts = await this.podcasts.find();
 
       return {
         ok: true,
@@ -33,17 +36,18 @@ export class PodcastsService {
     }
   }
 
-  // createPodcasts(createPodcastInputType: CreatePodcastInputType): boolean {
-  //   this.podcasts.push({
-  //     id: this.podcasts.length + 1,
-  //     ...createPodcastInputType,
-  //   });
-
-  //   if (this.podcasts.length === 0) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
+  async createPodcast(
+    createPodcastInputType: CreatePodcastInputType,
+  ): Promise<CreatePodcastOutputType> {
+    try {
+      await this.podcasts.save(this.podcasts.create(createPodcastInputType));
+      return {
+        ok: true,
+      };
+    } catch {
+      return returnFalseWithErrorMessage('Could not create podcast');
+    }
+  }
 
   // getOnePodcast({ podcastId }: PodcastInputType) {
   //   const podcast = this.podcasts.find((podcast) => podcast.id === podcastId);
