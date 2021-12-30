@@ -14,6 +14,7 @@ import {
 } from './dto/delete-podcast.dto';
 import { EditEpisodeInputType } from './dto/edit-episode.dto';
 import { EditPodcastInputType } from './dto/edit-podcast.dto';
+import { EpisodesOutputType } from './dto/episodes.dto';
 import { PodcastInputType, PodcastOutputType } from './dto/podcast.dto';
 import { PodcastsOutputType } from './dto/podcasts.dto';
 import { Episode } from './entities/episode.entity';
@@ -24,7 +25,7 @@ export class PodcastsService {
   constructor(
     @InjectRepository(Podcast)
     private readonly podcasts: Repository<Podcast>,
-    @InjectRepository(Episode) episodes: Repository<Episode>,
+    @InjectRepository(Episode) private readonly episodes: Repository<Episode>,
   ) {}
 
   async allPodcasts(): Promise<PodcastsOutputType> {
@@ -103,13 +104,20 @@ export class PodcastsService {
     }
   }
 
-  // getAllEpisodes(id: PodcastInputType): Episode[] {
-  //   const { episodes } = this.getOnePodcast(id);
-  //   if (!episodes) {
-  //     return [];
-  //   }
-  //   return this.episodes;
-  // }
+  async allEpisodes(): Promise<EpisodesOutputType> {
+    try {
+      const episodes = await this.episodes.find();
+      if (!episodes) {
+        returnFalseWithErrorMessage('episodes not found');
+      }
+      return {
+        ok: true,
+        episodes,
+      };
+    } catch {
+      return returnFalseWithErrorMessage('Could not find episodes');
+    }
+  }
 
   // createEpisode(createEpisodeInputType: CreateEpisodeInputType) {
   //   const podcast = this.getOnePodcast({
