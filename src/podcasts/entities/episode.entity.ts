@@ -8,11 +8,6 @@ import { Podcast } from './podcast.entity';
 @ObjectType()
 @Entity()
 export class Episode extends CoreEntity {
-  @PrimaryGeneratedColumn()
-  @Field(() => Int)
-  @IsNumber()
-  id: number;
-
   @Field(() => String)
   @Column()
   @IsString()

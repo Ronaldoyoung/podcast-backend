@@ -30,7 +30,7 @@ import { Episode } from './podcasts/entities/episode.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
-      logging: false,
+      logging: process.env.NODE_ENV !== 'prod',
       entities: [Podcast, Episode],
     }),
     GraphQLModule.forRoot({

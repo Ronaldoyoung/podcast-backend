@@ -9,7 +9,7 @@ import { DeletePodcastInputType } from './dto/delete-podcast.dto';
 import { EditEpisodeInputType } from './dto/edit-episode.dto';
 import { EditPodcastInputType } from './dto/edit-podcast.dto';
 import { EpisodesInputType } from './dto/episodes.dto';
-import { PodcastInputType } from './dto/podcast.dto';
+import { PodcastInputType, PodcastOutputType } from './dto/podcast.dto';
 import { PodcastsOutputType } from './dto/podcasts.dto';
 import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
@@ -20,7 +20,7 @@ export class PodcastsResolver {
   constructor(private readonly podcastsService: PodcastsService) {}
 
   @Query(() => PodcastsOutputType)
-  async allPodcasts(): Promise<PodcastsOutputType> {
+  allPodcasts(): Promise<PodcastsOutputType> {
     return this.podcastsService.allPodcasts();
   }
 
@@ -31,10 +31,12 @@ export class PodcastsResolver {
     return this.podcastsService.createPodcast(createPodcastInputType);
   }
 
-  // @Query(() => Podcast)
-  // getOnePodcast(@Args('input') podcastId: PodcastInputType) {
-  //   return this.podcastsService.getOnePodcast(podcastId);
-  // }
+  @Query(() => PodcastOutputType)
+  podcast(
+    @Args('input') podcastInputType: PodcastInputType,
+  ): Promise<PodcastOutputType> {
+    return this.podcastsService.findPodcastById(podcastInputType);
+  }
 
   // @Mutation(() => Boolean)
   // editPodcast(@Args('input') editPodcastInputType: EditPodcastInputType) {

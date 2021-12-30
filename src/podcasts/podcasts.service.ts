@@ -10,7 +10,7 @@ import {
 import { DeleteEpisodeInputType } from './dto/delete-episode.dto';
 import { EditEpisodeInputType } from './dto/edit-episode.dto';
 import { EditPodcastInputType } from './dto/edit-podcast.dto';
-import { PodcastInputType } from './dto/podcast.dto';
+import { PodcastInputType, PodcastOutputType } from './dto/podcast.dto';
 import { PodcastsOutputType } from './dto/podcasts.dto';
 import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
@@ -49,14 +49,21 @@ export class PodcastsService {
     }
   }
 
-  // getOnePodcast({ podcastId }: PodcastInputType) {
-  //   const podcast = this.podcasts.find((podcast) => podcast.id === podcastId);
-
-  //   if (!podcast) {
-  //     throw new NotFoundException(`Podcast with ID ${podcastId} not found.`);
-  //   }
-  //   return podcast;
-  // }
+  async findPodcastById({ id }: PodcastInputType): Promise<PodcastOutputType> {
+    try {
+      const podcast = await this.podcasts.findOne(id);
+      if (!podcast) {
+        return returnFalseWithErrorMessage('Podcast not found');
+      }
+      return {
+        ok: true,
+        podcast,
+      };
+    } catch {
+      return returnFalseWithErrorMessage('Could not find podcast');
+    }
+    // return podcast;
+  }
 
   // editPodcast(editPodcastInputType: EditPodcastInputType) {
   //   const podcast = this.getOnePodcast({
