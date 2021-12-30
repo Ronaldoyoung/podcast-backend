@@ -1,18 +1,27 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { returnFalseWithErrorMessage } from 'src/common/functions/return-false.function';
 import { Repository } from 'typeorm';
-import { CreateEpisodeInputType } from './dto/create-episode.dto';
+import {
+  CreateEpisodeInputType,
+  CreateEpisodeOutputType,
+} from './dto/create-episode.dto';
 import {
   CreatePodcastInputType,
   CreatePodcastOutputType,
 } from './dto/create-podcast.dto';
-import { DeleteEpisodeInputType } from './dto/delete-episode.dto';
+import {
+  DeleteEpisodeInputType,
+  DeleteEpisodeOutputType,
+} from './dto/delete-episode.dto';
 import {
   DeletePodcastInputType,
   DeletePodcastOutputType,
 } from './dto/delete-podcast.dto';
-import { EditEpisodeInputType } from './dto/edit-episode.dto';
+import {
+  EditEpisodeInputType,
+  EditEpisodeOutput,
+} from './dto/edit-episode.dto';
 import { EditPodcastInputType } from './dto/edit-podcast.dto';
 import { EpisodesOutputType } from './dto/episodes.dto';
 import { PodcastInputType, PodcastOutputType } from './dto/podcast.dto';
@@ -119,47 +128,69 @@ export class PodcastsService {
     }
   }
 
-  // createEpisode(createEpisodeInputType: CreateEpisodeInputType) {
-  //   const podcast = this.getOnePodcast({
-  //     podcastId: createEpisodeInputType.podcastId,
-  //   });
+  async createEpisode(
+    createEpisodeInputType: CreateEpisodeInputType,
+  ): Promise<CreateEpisodeOutputType> {
+    try {
+      const podcast = await this.podcasts.findOne(
+        createEpisodeInputType.podcastId,
+      );
+      if (!podcast) {
+        return returnFalseWithErrorMessage('Podcast not found');
+      }
 
-  //   if (!podcast.episodes) {
-  //     podcast['episodes'] = [];
-  //   }
-  //   podcast.episodes.push({
-  //     id: podcast.episodes.length + 1,
-  //     ...createEpisodeInputType,
-  //   });
-  //   return true;
-  // }
+      await this.episodes.save(
+        this.episodes.create({
+          ...createEpisodeInputType,
+          podcast,
+        }),
+      );
 
-  // deleteEpisode(deleteEpisodeInputType: DeleteEpisodeInputType) {
-  //   const podcast = this.getOnePodcast({
-  //     podcastId: deleteEpisodeInputType.podcastId,
-  //   });
-  //   podcast.episodes = podcast.episodes.filter(
-  //     (episode) => episode.id !== deleteEpisodeInputType.id,
-  //   );
-  // }
+      return {
+        ok: true,
+      };
+    } catch {
+      return returnFalseWithErrorMessage('Could not create episode');
+    }
+  }
 
-  // editEpisode(editEpisodeInputType: EditEpisodeInputType) {
-  //   const podcast = this.getOnePodcast({
-  //     podcastId: editEpisodeInputType.podcastId,
-  //   });
-  //   this.deleteEpisode({
-  //     id: editEpisodeInputType.id,
-  //     podcastId: editEpisodeInputType.podcastId,
-  //   });
+  async deleteEpisode({
+    episodeId,
+  }: DeleteEpisodeInputType): Promise<DeleteEpisodeOutputType> {
+    try {
+      const episode = await this.episodes.findOne(episodeId);
+      if (!episode) {
+        return returnFalseWithErrorMessage('Episode not Found');
+      }
+      await this.episodes.delete(episodeId);
+      return {
+        ok: true,
+      };
+    } catch {
+      return returnFalseWithErrorMessage('Could not delete episode');
+    }
+  }
 
-  //   const obj = {
-  //     id: editEpisodeInputType.id,
-  //     title: editEpisodeInputType.title,
-  //     category: editEpisodeInputType.category,
-  //     rating: editEpisodeInputType.rating,
-  //   };
+  async editEpisode(
+    editEpisodeInputType: EditEpisodeInputType,
+  ): Promise<EditEpisodeOutput> {
+    try {
+      const episode = await this.episodes.findOne(
+        editEpisodeInputType.episodeId,
+      );
 
-  //   podcast.episodes.push(obj);
-  //   return true;
-  // }
+      if (!episode) {
+        return returnFalseWithErrorMessage('Episode not found');
+      }
+      await this.episodes.save({
+        id: editEpisodeInputType.episodeId,
+        ...editEpisodeInputType,
+      });
+      return {
+        ok: true,
+      };
+    } catch {
+      return returnFalseWithErrorMessage('Could not edit episode');
+    }
+  }
 }

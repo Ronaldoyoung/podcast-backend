@@ -1,5 +1,4 @@
-import { Field, InputType, Int, ObjectType, PickType } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { InputType, ObjectType, PickType } from '@nestjs/graphql';
 import { CoreOutput } from 'src/common/dto/output.dto';
 import { Podcast } from '../entities/podcast.entity';
 

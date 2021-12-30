@@ -1,15 +1,24 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { CreateEpisodeInputType } from './dto/create-episode.dto';
+import {
+  CreateEpisodeInputType,
+  CreateEpisodeOutputType,
+} from './dto/create-episode.dto';
 import {
   CreatePodcastInputType,
   CreatePodcastOutputType,
 } from './dto/create-podcast.dto';
-import { DeleteEpisodeInputType } from './dto/delete-episode.dto';
+import {
+  DeleteEpisodeInputType,
+  DeleteEpisodeOutputType,
+} from './dto/delete-episode.dto';
 import {
   DeletePodcastInputType,
   DeletePodcastOutputType,
 } from './dto/delete-podcast.dto';
-import { EditEpisodeInputType } from './dto/edit-episode.dto';
+import {
+  EditEpisodeInputType,
+  EditEpisodeOutput,
+} from './dto/edit-episode.dto';
 import {
   EditPodcastInputType,
   EditPodcastOutputType,
@@ -17,7 +26,6 @@ import {
 import { EpisodesOutputType } from './dto/episodes.dto';
 import { PodcastInputType, PodcastOutputType } from './dto/podcast.dto';
 import { PodcastsOutputType } from './dto/podcasts.dto';
-import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
 import { PodcastsService } from './podcasts.service';
 
@@ -63,18 +71,24 @@ export class PodcastsResolver {
     return this.podcastsService.allEpisodes();
   }
 
-  // @Mutation(() => Boolean)
-  // createEpisode(@Args('input') createEpisodeInputType: CreateEpisodeInputType) {
-  //   return this.podcastsService.createEpisode(createEpisodeInputType);
-  // }
+  @Mutation(() => CreateEpisodeOutputType)
+  createEpisode(
+    @Args('input') createEpisodeInputType: CreateEpisodeInputType,
+  ): Promise<CreateEpisodeOutputType> {
+    return this.podcastsService.createEpisode(createEpisodeInputType);
+  }
 
-  // @Mutation(() => Boolean)
-  // editEpisode(@Args('input') editEpisodeInputType: EditEpisodeInputType) {
-  //   return this.podcastsService.editEpisode(editEpisodeInputType);
-  // }
+  @Mutation(() => EditEpisodeOutput)
+  editEpisode(
+    @Args('input') editEpisodeInputType: EditEpisodeInputType,
+  ): Promise<EditEpisodeOutput> {
+    return this.podcastsService.editEpisode(editEpisodeInputType);
+  }
 
-  // @Mutation(() => Boolean)
-  // deleteEpisode(@Args('input') deleteEpisodeInputType: DeleteEpisodeInputType) {
-  //   return this.podcastsService.deleteEpisode(deleteEpisodeInputType);
-  // }
+  @Mutation(() => DeleteEpisodeOutputType)
+  deleteEpisode(
+    @Args('input') deleteEpisodeInputType: DeleteEpisodeInputType,
+  ): Promise<DeleteEpisodeOutputType> {
+    return this.podcastsService.deleteEpisode(deleteEpisodeInputType);
+  }
 }

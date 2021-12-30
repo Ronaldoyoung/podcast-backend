@@ -1,8 +1,11 @@
-import { Field, InputType, Int, PickType } from '@nestjs/graphql';
-import { Episode } from '../entities/episode.entity';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { CoreOutput } from 'src/common/dto/output.dto';
 
 @InputType()
-export class DeleteEpisodeInputType extends PickType(Episode, ['id']) {
+export class DeleteEpisodeInputType {
   @Field(() => Int)
-  podcastId: number;
+  episodeId: number;
 }
+
+@ObjectType()
+export class DeleteEpisodeOutputType extends CoreOutput {}

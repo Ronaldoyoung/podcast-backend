@@ -1,7 +1,7 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { IsNumber, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { Podcast } from './podcast.entity';
 
 @InputType('CreateEpisodeInputType', { isAbstract: true })
@@ -13,15 +13,15 @@ export class Episode extends CoreEntity {
   @IsString()
   title: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   @Column()
   @IsString()
   category?: string;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int)
   @Column()
   @IsNumber()
-  rating?: number;
+  rating: number;
 
   @Field(() => Podcast)
   @ManyToOne(() => Podcast, (podcast) => podcast.episodes)
