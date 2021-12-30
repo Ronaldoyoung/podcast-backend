@@ -5,7 +5,10 @@ import {
   CreatePodcastOutputType,
 } from './dto/create-podcast.dto';
 import { DeleteEpisodeInputType } from './dto/delete-episode.dto';
-import { DeletePodcastInputType } from './dto/delete-podcast.dto';
+import {
+  DeletePodcastInputType,
+  DeletePodcastOutputType,
+} from './dto/delete-podcast.dto';
 import { EditEpisodeInputType } from './dto/edit-episode.dto';
 import {
   EditPodcastInputType,
@@ -48,10 +51,12 @@ export class PodcastsResolver {
     return this.podcastsService.editPodcast(editPodcastInputType);
   }
 
-  // @Mutation(() => Boolean)
-  // deletePodcast(@Args('input') deletePodcastInputType: DeletePodcastInputType) {
-  //   return this.podcastsService.deletePodcast(deletePodcastInputType);
-  // }
+  @Mutation(() => DeletePodcastOutputType)
+  deletePodcast(
+    @Args('input') deletePodcastInputType: DeletePodcastInputType,
+  ): Promise<DeletePodcastOutputType> {
+    return this.podcastsService.deletePodcast(deletePodcastInputType);
+  }
 
   // @Query(() => [Episode])
   // getAllEpisodes(

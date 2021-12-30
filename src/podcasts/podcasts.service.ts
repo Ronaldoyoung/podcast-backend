@@ -8,6 +8,10 @@ import {
   CreatePodcastOutputType,
 } from './dto/create-podcast.dto';
 import { DeleteEpisodeInputType } from './dto/delete-episode.dto';
+import {
+  DeletePodcastInputType,
+  DeletePodcastOutputType,
+} from './dto/delete-podcast.dto';
 import { EditEpisodeInputType } from './dto/edit-episode.dto';
 import { EditPodcastInputType } from './dto/edit-podcast.dto';
 import { PodcastInputType, PodcastOutputType } from './dto/podcast.dto';
@@ -82,11 +86,22 @@ export class PodcastsService {
     }
   }
 
-  // deletePodcast({ podcastId }: PodcastInputType) {
-  //   this.getOnePodcast({ podcastId });
-  //   this.podcasts = this.podcasts.filter((podcast) => podcast.id !== podcastId);
-  //   return true;
-  // }
+  async deletePodcast({
+    podcastId,
+  }: DeletePodcastInputType): Promise<DeletePodcastOutputType> {
+    try {
+      const podcast = this.podcasts.findOne(podcastId);
+      if (!podcast) {
+        return returnFalseWithErrorMessage('Podcast not found');
+      }
+      await this.podcasts.delete(podcastId);
+      return {
+        ok: true,
+      };
+    } catch {
+      return returnFalseWithErrorMessage('Could not delete podcast');
+    }
+  }
 
   // getAllEpisodes(id: PodcastInputType): Episode[] {
   //   const { episodes } = this.getOnePodcast(id);
