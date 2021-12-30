@@ -17,51 +17,51 @@ export class PodcastsResolver {
   constructor(private readonly podcastsService: PodcastsService) {}
 
   @Query(() => PodcastsOutputType)
-  getAllPodcasts(): PodcastsOutputType {
-    return this.podcastsService.getAllPodcasts();
+  async allPodcasts(): Promise<PodcastsOutputType> {
+    return this.podcastsService.allPodcasts();
   }
 
-  @Mutation(() => Boolean)
-  createPodcasts(
-    @Args('input') createPodcastInputType: CreatePodcastInputType,
-  ): boolean {
-    return this.podcastsService.createPodcasts(createPodcastInputType);
-  }
+  // @Mutation(() => Boolean)
+  // createPodcasts(
+  //   @Args('input') createPodcastInputType: CreatePodcastInputType,
+  // ): boolean {
+  //   return this.podcastsService.createPodcasts(createPodcastInputType);
+  // }
 
-  @Query(() => Podcast)
-  getOnePodcast(@Args('input') podcastId: PodcastInputType) {
-    return this.podcastsService.getOnePodcast(podcastId);
-  }
+  // @Query(() => Podcast)
+  // getOnePodcast(@Args('input') podcastId: PodcastInputType) {
+  //   return this.podcastsService.getOnePodcast(podcastId);
+  // }
 
-  @Mutation(() => Boolean)
-  editPodcast(@Args('input') editPodcastInputType: EditPodcastInputType) {
-    return this.podcastsService.editPodcast(editPodcastInputType);
-  }
+  // @Mutation(() => Boolean)
+  // editPodcast(@Args('input') editPodcastInputType: EditPodcastInputType) {
+  //   return this.podcastsService.editPodcast(editPodcastInputType);
+  // }
 
-  @Mutation(() => Boolean)
-  deletePodcast(@Args('input') deletePodcastInputType: DeletePodcastInputType) {
-    return this.podcastsService.deletePodcast(deletePodcastInputType);
-  }
+  // @Mutation(() => Boolean)
+  // deletePodcast(@Args('input') deletePodcastInputType: DeletePodcastInputType) {
+  //   return this.podcastsService.deletePodcast(deletePodcastInputType);
+  // }
 
-  @Query(() => [Episode])
-  getAllEpisodes(
-    @Args('input') episodesInputType: EpisodesInputType,
-  ): Episode[] {
-    return this.podcastsService.getAllEpisodes(episodesInputType);
-  }
+  // @Query(() => [Episode])
+  // getAllEpisodes(
+  //   @Args('input') episodesInputType: EpisodesInputType,
+  // ): Episode[] {
+  //   return this.podcastsService.getAllEpisodes(episodesInputType);
+  // }
 
-  @Mutation(() => Boolean)
-  createEpisode(@Args('input') createEpisodeInputType: CreateEpisodeInputType) {
-    return this.podcastsService.createEpisode(createEpisodeInputType);
-  }
+  // @Mutation(() => Boolean)
+  // createEpisode(@Args('input') createEpisodeInputType: CreateEpisodeInputType) {
+  //   return this.podcastsService.createEpisode(createEpisodeInputType);
+  // }
 
-  @Mutation(() => Boolean)
-  editEpisode(@Args('input') editEpisodeInputType: EditEpisodeInputType) {
-    return this.podcastsService.editEpisode(editEpisodeInputType);
-  }
+  // @Mutation(() => Boolean)
+  // editEpisode(@Args('input') editEpisodeInputType: EditEpisodeInputType) {
+  //   return this.podcastsService.editEpisode(editEpisodeInputType);
+  // }
 
-  @Mutation(() => Boolean)
-  deleteEpisode(@Args('input') deleteEpisodeInputType: DeleteEpisodeInputType) {
-    return this.podcastsService.deleteEpisode(deleteEpisodeInputType);
-  }
+  // @Mutation(() => Boolean)
+  // deleteEpisode(@Args('input') deleteEpisodeInputType: DeleteEpisodeInputType) {
+  //   return this.podcastsService.deleteEpisode(deleteEpisodeInputType);
+  // }
 }

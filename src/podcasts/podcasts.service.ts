@@ -1,4 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { returnFalseWithErrorMessage } from 'src/common/functions/return-false.function';
+import { Repository } from 'typeorm';
 import { CreateEpisodeInputType } from './dto/create-episode.dto';
 import { CreatePodcastInputType } from './dto/create-podcast.dto';
 import { DeleteEpisodeInputType } from './dto/delete-episode.dto';
@@ -11,100 +14,113 @@ import { Podcast } from './entities/podcast.entity';
 
 @Injectable()
 export class PodcastsService {
-  private podcasts: Podcast[] = [];
-  private episodes: Episode[] = [];
-  getAllPodcasts(): PodcastsOutputType {
-    return { result: this.podcasts };
-  }
+  constructor(
+    @InjectRepository(Podcast)
+    private readonly podcastsRepository: Repository<Podcast>,
+    @InjectRepository(Episode) episodesRepository: Repository<Episode>,
+  ) {}
 
-  createPodcasts(createPodcastInputType: CreatePodcastInputType): boolean {
-    this.podcasts.push({
-      id: this.podcasts.length + 1,
-      ...createPodcastInputType,
-    });
+  async allPodcasts(): Promise<PodcastsOutputType> {
+    try {
+      const podcasts = await this.podcastsRepository.find();
 
-    if (this.podcasts.length === 0) {
-      return false;
+      return {
+        ok: true,
+        result: podcasts,
+      };
+    } catch {
+      return returnFalseWithErrorMessage('Could not find podcasts');
     }
-    return true;
   }
 
-  getOnePodcast({ podcastId }: PodcastInputType) {
-    const podcast = this.podcasts.find((podcast) => podcast.id === podcastId);
+  // createPodcasts(createPodcastInputType: CreatePodcastInputType): boolean {
+  //   this.podcasts.push({
+  //     id: this.podcasts.length + 1,
+  //     ...createPodcastInputType,
+  //   });
 
-    if (!podcast) {
-      throw new NotFoundException(`Podcast with ID ${podcastId} not found.`);
-    }
-    return podcast;
-  }
+  //   if (this.podcasts.length === 0) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
 
-  editPodcast(editPodcastInputType: EditPodcastInputType) {
-    const podcast = this.getOnePodcast({
-      podcastId: editPodcastInputType.podcastId,
-    });
-    this.deletePodcast({ podcastId: editPodcastInputType.podcastId });
-    this.podcasts.push({
-      ...podcast,
-      ...editPodcastInputType,
-    });
-    return true;
-  }
+  // getOnePodcast({ podcastId }: PodcastInputType) {
+  //   const podcast = this.podcasts.find((podcast) => podcast.id === podcastId);
 
-  deletePodcast({ podcastId }: PodcastInputType) {
-    this.getOnePodcast({ podcastId });
-    this.podcasts = this.podcasts.filter((podcast) => podcast.id !== podcastId);
-    return true;
-  }
+  //   if (!podcast) {
+  //     throw new NotFoundException(`Podcast with ID ${podcastId} not found.`);
+  //   }
+  //   return podcast;
+  // }
 
-  getAllEpisodes(id: PodcastInputType): Episode[] {
-    const { episodes } = this.getOnePodcast(id);
-    if (!episodes) {
-      return [];
-    }
-    return episodes;
-  }
+  // editPodcast(editPodcastInputType: EditPodcastInputType) {
+  //   const podcast = this.getOnePodcast({
+  //     podcastId: editPodcastInputType.podcastId,
+  //   });
+  //   this.deletePodcast({ podcastId: editPodcastInputType.podcastId });
+  //   this.podcasts.push({
+  //     ...podcast,
+  //     ...editPodcastInputType,
+  //   });
+  //   return true;
+  // }
 
-  createEpisode(createEpisodeInputType: CreateEpisodeInputType) {
-    const podcast = this.getOnePodcast({
-      podcastId: createEpisodeInputType.podcastId,
-    });
+  // deletePodcast({ podcastId }: PodcastInputType) {
+  //   this.getOnePodcast({ podcastId });
+  //   this.podcasts = this.podcasts.filter((podcast) => podcast.id !== podcastId);
+  //   return true;
+  // }
 
-    if (!podcast.episodes) {
-      podcast['episodes'] = [];
-    }
-    podcast.episodes.push({
-      id: podcast.episodes.length + 1,
-      ...createEpisodeInputType,
-    });
-    return true;
-  }
+  // getAllEpisodes(id: PodcastInputType): Episode[] {
+  //   const { episodes } = this.getOnePodcast(id);
+  //   if (!episodes) {
+  //     return [];
+  //   }
+  //   return this.episodes;
+  // }
 
-  deleteEpisode(deleteEpisodeInputType: DeleteEpisodeInputType) {
-    const podcast = this.getOnePodcast({
-      podcastId: deleteEpisodeInputType.podcastId,
-    });
-    podcast.episodes = podcast.episodes.filter(
-      (episode) => episode.id !== deleteEpisodeInputType.id,
-    );
-  }
+  // createEpisode(createEpisodeInputType: CreateEpisodeInputType) {
+  //   const podcast = this.getOnePodcast({
+  //     podcastId: createEpisodeInputType.podcastId,
+  //   });
 
-  editEpisode(editEpisodeInputType: EditEpisodeInputType) {
-    const podcast = this.getOnePodcast({
-      podcastId: editEpisodeInputType.podcastId,
-    });
-    this.deleteEpisode({
-      id: editEpisodeInputType.id,
-      podcastId: editEpisodeInputType.podcastId,
-    });
+  //   if (!podcast.episodes) {
+  //     podcast['episodes'] = [];
+  //   }
+  //   podcast.episodes.push({
+  //     id: podcast.episodes.length + 1,
+  //     ...createEpisodeInputType,
+  //   });
+  //   return true;
+  // }
 
-    const obj = {
-      id: editEpisodeInputType.id,
-      title: editEpisodeInputType.title,
-      category: editEpisodeInputType.category,
-      rating: editEpisodeInputType.rating,
-    };
+  // deleteEpisode(deleteEpisodeInputType: DeleteEpisodeInputType) {
+  //   const podcast = this.getOnePodcast({
+  //     podcastId: deleteEpisodeInputType.podcastId,
+  //   });
+  //   podcast.episodes = podcast.episodes.filter(
+  //     (episode) => episode.id !== deleteEpisodeInputType.id,
+  //   );
+  // }
 
-    podcast.episodes.push(obj);
-    return true;
-  }
+  // editEpisode(editEpisodeInputType: EditEpisodeInputType) {
+  //   const podcast = this.getOnePodcast({
+  //     podcastId: editEpisodeInputType.podcastId,
+  //   });
+  //   this.deleteEpisode({
+  //     id: editEpisodeInputType.id,
+  //     podcastId: editEpisodeInputType.podcastId,
+  //   });
+
+  //   const obj = {
+  //     id: editEpisodeInputType.id,
+  //     title: editEpisodeInputType.title,
+  //     category: editEpisodeInputType.category,
+  //     rating: editEpisodeInputType.rating,
+  //   };
+
+  //   podcast.episodes.push(obj);
+  //   return true;
+  // }
 }
