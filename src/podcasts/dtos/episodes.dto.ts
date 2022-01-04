@@ -3,7 +3,7 @@ import { CoreOutput } from 'src/common/dto/output.dto';
 import { Episode } from '../entities/episode.entity';
 
 @ObjectType()
-export class EpisodesOutputType extends CoreOutput {
+export class EpisodesOutput extends CoreOutput {
   @Field(() => [Episode])
   episodes?: Episode[];
 }

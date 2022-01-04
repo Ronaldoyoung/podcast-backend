@@ -3,29 +3,26 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { returnFalseWithErrorMessage } from 'src/common/functions/return-false.function';
 import { Repository } from 'typeorm';
 import {
-  CreateEpisodeInputType,
-  CreateEpisodeOutputType,
-} from './dto/create-episode.dto';
+  CreateEpisodeInput,
+  CreateEpisodeOutput,
+} from './dtos/create-episode.dto';
 import {
-  CreatePodcastInputType,
-  CreatePodcastOutputType,
-} from './dto/create-podcast.dto';
+  CreatePodcastInput,
+  CreatePodcastOutput,
+} from './dtos/create-podcast.dto';
 import {
-  DeleteEpisodeInputType,
-  DeleteEpisodeOutputType,
-} from './dto/delete-episode.dto';
+  DeleteEpisodeInput,
+  DeleteEpisodeOutput,
+} from './dtos/delete-episode.dto';
 import {
-  DeletePodcastInputType,
-  DeletePodcastOutputType,
-} from './dto/delete-podcast.dto';
-import {
-  EditEpisodeInputType,
-  EditEpisodeOutput,
-} from './dto/edit-episode.dto';
-import { EditPodcastInputType } from './dto/edit-podcast.dto';
-import { EpisodesOutputType } from './dto/episodes.dto';
-import { PodcastInputType, PodcastOutputType } from './dto/podcast.dto';
-import { PodcastsOutputType } from './dto/podcasts.dto';
+  DeletePodcastInput,
+  DeletePodcastOutput,
+} from './dtos/delete-podcast.dto';
+import { EditEpisodeInput, EditEpisodeOutput } from './dtos/edit-episode.dto';
+import { EditPodcastInput } from './dtos/edit-podcast.dto';
+import { EpisodesOutput } from './dtos/episodes.dto';
+import { PodcastInput, PodcastOutput } from './dtos/podcast.dto';
+import { PodcastsOutput } from './dtos/podcasts.dto';
 import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
 
@@ -37,7 +34,7 @@ export class PodcastsService {
     @InjectRepository(Episode) private readonly episodes: Repository<Episode>,
   ) {}
 
-  async allPodcasts(): Promise<PodcastsOutputType> {
+  async allPodcasts(): Promise<PodcastsOutput> {
     try {
       const podcasts = await this.podcasts.find();
 
@@ -51,10 +48,10 @@ export class PodcastsService {
   }
 
   async createPodcast(
-    createPodcastInputType: CreatePodcastInputType,
-  ): Promise<CreatePodcastOutputType> {
+    createPodcastInput: CreatePodcastInput,
+  ): Promise<CreatePodcastOutput> {
     try {
-      await this.podcasts.save(this.podcasts.create(createPodcastInputType));
+      await this.podcasts.save(this.podcasts.create(createPodcastInput));
       return {
         ok: true,
       };
@@ -63,7 +60,7 @@ export class PodcastsService {
     }
   }
 
-  async findPodcastById({ id }: PodcastInputType): Promise<PodcastOutputType> {
+  async findPodcastById({ id }: PodcastInput): Promise<PodcastOutput> {
     try {
       const podcast = await this.podcasts.findOne(id);
       if (!podcast) {
@@ -78,15 +75,15 @@ export class PodcastsService {
     }
   }
 
-  async editPodcast(editPodcastInputType: EditPodcastInputType) {
+  async editPodcast(editPodcastInput: EditPodcastInput) {
     try {
-      const podcast = this.podcasts.findOne(editPodcastInputType.podcastId);
+      const podcast = this.podcasts.findOne(editPodcastInput.podcastId);
       if (!podcast) {
         return returnFalseWithErrorMessage('Podcast not found');
       }
       await this.podcasts.save({
-        id: editPodcastInputType.podcastId,
-        ...editPodcastInputType,
+        id: editPodcastInput.podcastId,
+        ...editPodcastInput,
       });
       return {
         ok: true,
@@ -98,7 +95,7 @@ export class PodcastsService {
 
   async deletePodcast({
     podcastId,
-  }: DeletePodcastInputType): Promise<DeletePodcastOutputType> {
+  }: DeletePodcastInput): Promise<DeletePodcastOutput> {
     try {
       const podcast = this.podcasts.findOne(podcastId);
       if (!podcast) {
@@ -113,7 +110,7 @@ export class PodcastsService {
     }
   }
 
-  async allEpisodes(): Promise<EpisodesOutputType> {
+  async allEpisodes(): Promise<EpisodesOutput> {
     try {
       const episodes = await this.episodes.find();
       if (!episodes) {
@@ -129,19 +126,17 @@ export class PodcastsService {
   }
 
   async createEpisode(
-    createEpisodeInputType: CreateEpisodeInputType,
-  ): Promise<CreateEpisodeOutputType> {
+    createEpisodeInput: CreateEpisodeInput,
+  ): Promise<CreateEpisodeOutput> {
     try {
-      const podcast = await this.podcasts.findOne(
-        createEpisodeInputType.podcastId,
-      );
+      const podcast = await this.podcasts.findOne(createEpisodeInput.podcastId);
       if (!podcast) {
         return returnFalseWithErrorMessage('Podcast not found');
       }
 
       await this.episodes.save(
         this.episodes.create({
-          ...createEpisodeInputType,
+          ...createEpisodeInput,
           podcast,
         }),
       );
@@ -156,7 +151,7 @@ export class PodcastsService {
 
   async deleteEpisode({
     episodeId,
-  }: DeleteEpisodeInputType): Promise<DeleteEpisodeOutputType> {
+  }: DeleteEpisodeInput): Promise<DeleteEpisodeOutput> {
     try {
       const episode = await this.episodes.findOne(episodeId);
       if (!episode) {
@@ -172,19 +167,17 @@ export class PodcastsService {
   }
 
   async editEpisode(
-    editEpisodeInputType: EditEpisodeInputType,
+    editEpisodeInput: EditEpisodeInput,
   ): Promise<EditEpisodeOutput> {
     try {
-      const episode = await this.episodes.findOne(
-        editEpisodeInputType.episodeId,
-      );
+      const episode = await this.episodes.findOne(editEpisodeInput.episodeId);
 
       if (!episode) {
         return returnFalseWithErrorMessage('Episode not found');
       }
       await this.episodes.save({
-        id: editEpisodeInputType.episodeId,
-        ...editEpisodeInputType,
+        id: editEpisodeInput.episodeId,
+        ...editEpisodeInput,
       });
       return {
         ok: true,

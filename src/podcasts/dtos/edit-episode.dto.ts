@@ -6,10 +6,10 @@ import {
   PartialType,
 } from '@nestjs/graphql';
 import { CoreOutput } from 'src/common/dto/output.dto';
-import { CreateEpisodeInputType } from './create-episode.dto';
+import { CreateEpisodeInput } from './create-episode.dto';
 
 @InputType()
-export class EditEpisodeInputType extends PartialType(CreateEpisodeInputType) {
+export class EditEpisodeInput extends PartialType(CreateEpisodeInput) {
   @Field(() => Int)
   episodeId: number;
 }

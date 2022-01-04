@@ -3,7 +3,7 @@ import { CoreOutput } from 'src/common/dto/output.dto';
 import { Episode } from '../entities/episode.entity';
 
 @InputType()
-export class CreateEpisodeInputType extends PickType(Episode, [
+export class CreateEpisodeInput extends PickType(Episode, [
   'title',
   'category',
   'rating',
@@ -13,4 +13,4 @@ export class CreateEpisodeInputType extends PickType(Episode, [
 }
 
 @ObjectType()
-export class CreateEpisodeOutputType extends CoreOutput {}
+export class CreateEpisodeOutput extends CoreOutput {}

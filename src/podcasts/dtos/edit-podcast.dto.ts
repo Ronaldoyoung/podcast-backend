@@ -6,13 +6,13 @@ import {
   PartialType,
 } from '@nestjs/graphql';
 import { CoreOutput } from 'src/common/dto/output.dto';
-import { CreatePodcastInputType } from './create-podcast.dto';
+import { CreatePodcastInput } from './create-podcast.dto';
 
 @InputType()
-export class EditPodcastInputType extends PartialType(CreatePodcastInputType) {
+export class EditPodcastInput extends PartialType(CreatePodcastInput) {
   @Field(() => Int)
   podcastId: number;
 }
 
 @ObjectType()
-export class EditPodcastOutputType extends CoreOutput {}
+export class EditPodcastOutput extends CoreOutput {}

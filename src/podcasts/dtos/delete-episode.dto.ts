@@ -2,10 +2,10 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { CoreOutput } from 'src/common/dto/output.dto';
 
 @InputType()
-export class DeletePodcastInputType {
+export class DeleteEpisodeInput {
   @Field(() => Int)
-  podcastId: number;
+  episodeId: number;
 }
 
 @ObjectType()
-export class DeletePodcastOutputType extends CoreOutput {}
+export class DeleteEpisodeOutput extends CoreOutput {}
