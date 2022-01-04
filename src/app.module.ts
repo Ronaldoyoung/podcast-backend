@@ -6,6 +6,8 @@ import { PodcastsModule } from './podcasts/podcasts.module';
 import * as Joi from 'joi';
 import { Podcast } from './podcasts/entities/podcast.entity';
 import { Episode } from './podcasts/entities/episode.entity';
+import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -31,12 +33,13 @@ import { Episode } from './podcasts/entities/episode.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod',
-      entities: [Podcast, Episode],
+      entities: [Podcast, Episode, User],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
     }),
     PodcastsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
