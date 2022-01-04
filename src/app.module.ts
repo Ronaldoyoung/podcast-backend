@@ -8,6 +8,7 @@ import { Podcast } from './podcasts/entities/podcast.entity';
 import { Episode } from './podcasts/entities/episode.entity';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
+import { JwtModule } from './jwt/jwt.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { User } from './users/entities/user.entity';
     }),
     PodcastsModule,
     UsersModule,
+    JwtModule,
   ],
   controllers: [],
   providers: [],
