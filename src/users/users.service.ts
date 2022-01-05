@@ -9,6 +9,7 @@ import {
   CreateAccountOutput,
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login-dto';
+import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -62,6 +63,21 @@ export class UsersService {
       };
     } catch {
       return returnFalseWithErrorMessage('Could not login');
+    }
+  }
+
+  async findById(id: number): Promise<UserProfileOutput> {
+    try {
+      const user = await this.users.findOne({ id });
+      if (!user) {
+        return returnFalseWithErrorMessage('User not Found');
+      }
+      return {
+        ok: true,
+        user,
+      };
+    } catch {
+      return returnFalseWithErrorMessage('Could not find user');
     }
   }
 }
