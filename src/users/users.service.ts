@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { returnFalseWithErrorMessage } from 'src/common/functions/return-false.function';
+import { JwtService } from 'src/jwt/jwt.service';
 import { Repository } from 'typeorm';
 import {
   CreateAccountInput,
@@ -13,6 +15,8 @@ import { User } from './entities/user.entity';
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly config: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async createAccount({
