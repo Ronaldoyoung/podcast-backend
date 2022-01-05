@@ -15,7 +15,6 @@ import { User } from './entities/user.entity';
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
-    private readonly config: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -56,9 +55,10 @@ export class UsersService {
         return returnFalseWithErrorMessage('Wrong Password');
       }
 
+      const token = this.jwtService.sign(user.id);
       return {
         ok: true,
-        token: 'lalala',
+        token,
       };
     } catch {
       return returnFalseWithErrorMessage('Could not login');
