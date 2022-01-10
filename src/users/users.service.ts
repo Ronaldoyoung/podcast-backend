@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { returnFalseWithErrorMessage } from 'src/common/functions/return-false.function';
 import { JwtService } from 'src/jwt/jwt.service';
@@ -10,7 +9,7 @@ import {
 } from './dtos/create-account.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginInput, LoginOutput } from './dtos/login-dto';
-import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
+import { UserProfileOutput } from './dtos/user-profile.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
