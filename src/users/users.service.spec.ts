@@ -1,7 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtService } from 'src/jwt/jwt.service';
-import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { User, UserRole } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 const mockRepository = {
@@ -15,8 +16,14 @@ const mockJwtService = () => ({
   verify: jest.fn(),
 });
 
+type MockRepository<T = any> = Partial<
+  Record<keyof Repository<User>, jest.Mock>
+>;
+
 describe('UserService', () => {
   let service: UsersService;
+  let usersRepository: MockRepository<User>;
+
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       providers: [
@@ -32,13 +39,16 @@ describe('UserService', () => {
       ],
     }).compile();
     service = module.get<UsersService>(UsersService);
+    usersRepository = module.get(getRepositoryToken(User));
   });
 
   it('Should be defind', () => {
     expect(service).toBeDefined();
   });
 
-  it.todo('createAccount');
+  describe('createAccount', () => {
+    it('should fail if user exists', () => {});
+  });
   it.todo('login');
   it.todo('findById');
   it.todo('editProfile');
