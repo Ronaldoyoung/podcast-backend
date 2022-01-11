@@ -63,15 +63,18 @@ describe('UserService', () => {
         error: 'There is a user with that email already',
       });
     });
+
     it('should create a new user', async () => {
       usersRepository.findOne.mockResolvedValue(undefined);
       usersRepository.create.mockReturnValue(createAccountArgs);
-      await service.createAccount(createAccountArgs);
+      const result = await service.createAccount(createAccountArgs);
       expect(usersRepository.create).toHaveBeenCalledTimes(1);
       expect(usersRepository.create).toHaveBeenCalledWith(createAccountArgs);
 
       expect(usersRepository.save).toHaveBeenCalledTimes(1);
       expect(usersRepository.save).toHaveBeenCalledWith(createAccountArgs);
+
+      expect(result).toEqual({ ok: true });
     });
   });
   it.todo('login');
