@@ -177,8 +177,17 @@ describe('UserService', () => {
         input: { password: 'new.password' },
       };
       usersRepository.findOne.mockResolvedValue({ password: 'old' });
-      await service.editProfile(editProfileArgs.userId, editProfileArgs.input);
+      const result = await service.editProfile(
+        editProfileArgs.userId,
+        editProfileArgs.input,
+      );
       expect(usersRepository.save).toHaveBeenCalledWith(editProfileArgs.input);
+      expect(result).toEqual({ ok: true });
+    });
+    it('should fail on exception', async () => {
+      usersRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.editProfile(1, { email: '12' });
+      expect(result).toEqual({ ok: false, error: 'Could not edit profile' });
     });
   });
 });
