@@ -171,5 +171,14 @@ describe('UserService', () => {
       );
       expect(usersRepository.save).toHaveBeenCalledWith(newUser);
     });
+    it('should change password', async () => {
+      const editProfileArgs = {
+        userId: 1,
+        input: { password: 'new.password' },
+      };
+      usersRepository.findOne.mockResolvedValue({ password: 'old' });
+      await service.editProfile(editProfileArgs.userId, editProfileArgs.input);
+      expect(usersRepository.save).toHaveBeenCalledWith(editProfileArgs.input);
+    });
   });
 });
