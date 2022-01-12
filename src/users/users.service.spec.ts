@@ -9,6 +9,7 @@ const mockRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
   create: jest.fn(),
+  findOneOrFail: jest.fn(),
 });
 
 const mockJwtService = () => ({
@@ -129,6 +130,15 @@ describe('UserService', () => {
       expect(result).toEqual({ ok: true, token: 'signed-token-baby' });
     });
   });
-  it.todo('findById');
+  describe('findById', () => {
+    const findByIdArgs = {
+      id: 1,
+    };
+    it('should find an exists user', async () => {
+      usersRepository.findOneOrFail.mockResolvedValue(findByIdArgs);
+      const user = await service.findById(1);
+      expect(user).toEqual({ ok: true, user: findByIdArgs });
+    });
+  });
   it.todo('editProfile');
 });
