@@ -136,8 +136,14 @@ describe('UserService', () => {
     };
     it('should find an exists user', async () => {
       usersRepository.findOneOrFail.mockResolvedValue(findByIdArgs);
-      const user = await service.findById(1);
-      expect(user).toEqual({ ok: true, user: findByIdArgs });
+      const result = await service.findById(1);
+      expect(result).toEqual({ ok: true, user: findByIdArgs });
+    });
+
+    it('should fail if no user if found', async () => {
+      usersRepository.findOneOrFail.mockRejectedValue(new Error());
+      const result = await service.findById(1);
+      expect(result).toEqual({ ok: false, error: 'Could not find user' });
     });
   });
   it.todo('editProfile');
