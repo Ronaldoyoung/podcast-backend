@@ -77,7 +77,8 @@ export class PodcastsService {
 
   async editPodcast(editPodcastInput: EditPodcastInput) {
     try {
-      const podcast = this.podcasts.findOne(editPodcastInput.podcastId);
+      const podcast = await this.podcasts.findOne(editPodcastInput.podcastId);
+
       if (!podcast) {
         return returnFalseWithErrorMessage('Podcast not found');
       }
