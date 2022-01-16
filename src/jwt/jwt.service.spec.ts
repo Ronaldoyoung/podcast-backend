@@ -43,7 +43,7 @@ describe('JwtService', () => {
     it('should return the decoded token', () => {
       const TOKEN = 'TOKEN';
       const decodedToken = service.verify(TOKEN);
-      console.log(decodedToken);
+
       expect(decodedToken).toEqual({ id: USER_ID });
       expect(jwt.verify).toHaveBeenCalledTimes(1);
       expect(jwt.verify).toHaveBeenCalledWith(TOKEN, TEST_KEY);
