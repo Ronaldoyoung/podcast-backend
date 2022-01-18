@@ -272,7 +272,58 @@ describe('User Module', () => {
     });
   });
 
-  describe('Users Resolver', () => {
-    it.todo('editProfile');
+  describe('editProfile', () => {
+    it('should change email', () => {
+      const NEW_EMAIL = 'test@new.com';
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('x-jwt', jwtToken)
+        .send({
+          query: `mutation{
+            editProfile(input:{
+              email:"${NEW_EMAIL}"
+            }){
+              ok
+              error
+            }
+          }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                editProfile: { ok, error },
+              },
+            },
+          } = res;
+          expect(ok).toBe(true);
+          expect(error).toBe(null);
+        })
+        .then(() => {
+          return request(app.getHttpServer())
+            .post(GRAPHQL_ENDPOINT)
+            .set('x-jwt', jwtToken)
+            .send({
+              query: `{
+              me{
+                id
+                email
+              }
+            }`,
+            })
+            .expect(200)
+            .expect((res) => {
+              const {
+                body: {
+                  data: {
+                    me: { email },
+                  },
+                },
+              } = res;
+              expect(email).toBe(NEW_EMAIL);
+            });
+        });
+    });
   });
 });
