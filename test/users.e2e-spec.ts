@@ -38,8 +38,9 @@ describe('User Module', () => {
     it.todo('updateEpisode');
     it.todo('deleteEpisode');
   });
-  describe('Users Resolver', () => {
-    it('createAccount', () => {
+
+  describe('createAccount', () => {
+    it('should create Account', () => {
       return request(app.getHttpServer())
         .post(GRAPHQL_ENDPOINT)
         .send({
@@ -60,6 +61,29 @@ describe('User Module', () => {
           expect(res.body.data.createAccount.error).toBe(null);
         });
     });
+    it('should fail if account exists', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `mutation{
+          createAccount(input:{
+            email:"${testUser.eamil}"
+            password: "${testUser.password}"    
+            role: Host
+          }){
+            ok
+            error
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data.createAccount.ok).toBe(false);
+          expect(res.body.data.createAccount.error).toEqual(expect.any(String));
+        });
+    });
+  });
+  describe('Users Resolver', () => {
     it.todo('userProfile');
     it.todo('login');
     it.todo('me');
