@@ -4,6 +4,12 @@ import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
 import { getConnection } from 'typeorm';
 
+const GRAPHQL_ENDPOINT = '/graphql';
+const testUser = {
+  eamil: 'ronaldoyoung@gmail.com',
+  password: 'dbsendud12',
+};
+
 describe('User Module', () => {
   let app: INestApplication;
 
@@ -33,7 +39,27 @@ describe('User Module', () => {
     it.todo('deleteEpisode');
   });
   describe('Users Resolver', () => {
-    it.todo('createAccount');
+    it('createAccount', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `mutation{
+          createAccount(input:{
+            email:"${testUser.eamil}"
+            password: "${testUser.password}"    
+            role: Host
+          }){
+            ok
+            error
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data.createAccount.ok).toBe(true);
+          expect(res.body.data.createAccount.error).toBe(null);
+        });
+    });
     it.todo('userProfile');
     it.todo('login');
     it.todo('me');
