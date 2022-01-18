@@ -225,9 +225,54 @@ describe('User Module', () => {
         });
     });
   });
+  describe('me', () => {
+    it('should find my profile', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('x-jwt', jwtToken)
+        .send({
+          query: `{
+            me{
+              id
+              email
+            }
+          }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                me: { email },
+              },
+            },
+          } = res;
+          expect(email).toBe(testUser.eamil);
+        });
+    });
+    it('should not allow logged out user', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `{
+            me{
+              id
+              email
+            }
+          }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: { errors },
+          } = res;
+          const [error] = errors;
+          expect(error.message).toBe('Forbidden resource');
+        });
+    });
+  });
 
   describe('Users Resolver', () => {
-    it.todo('me');
     it.todo('editProfile');
   });
 });
