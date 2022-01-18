@@ -5,6 +5,9 @@ import { INestApplication } from '@nestjs/common';
 import { getConnection, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { Podcast } from 'src/podcasts/entities/podcast.entity';
+import { rmSync } from 'fs';
+import { Expose } from 'class-transformer';
 
 const GRAPHQL_ENDPOINT = '/graphql';
 const testUser = {
@@ -12,36 +15,39 @@ const testUser = {
   password: 'dbsendud12',
 };
 
+const testPodcast = {
+  title: 'testPodcast',
+  category: 'sports',
+  rating: 1,
+};
+
 describe('User Module', () => {
   let app: INestApplication;
   let userRepository: Repository<User>;
+  let podcastsRepository: Repository<Podcast>;
   let jwtToken: string;
 
+  const baseTest = () => request(app.getHttpServer()).post(GRAPHQL_ENDPOINT);
+  const publicTest = (query: string) => baseTest().send({ query });
+  const privateTest = (query: string) =>
+    baseTest().set('x-jwt', jwtToken).send({ query });
+
   beforeAll(async () => {
-    const moudle = await Test.createTestingModule({
+    const module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    app = moudle.createNestApplication();
-    userRepository = moudle.get<Repository<User>>(getRepositoryToken(User));
+    app = module.createNestApplication();
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    podcastsRepository = module.get<Repository<Podcast>>(
+      getRepositoryToken(Podcast),
+    );
     await app.init();
   });
 
   afterAll(async () => {
     await getConnection().dropDatabase();
     app.close();
-  });
-
-  describe('Podcasts Resolver', () => {
-    it.todo('getAllPodcasts');
-    it.todo('getPodcast');
-    it.todo('getEpisodes');
-    it.todo('createPodcast');
-    it.todo('deletePodcast');
-    it.todo('updatePodcast');
-    it.todo('createEpisode');
-    it.todo('updateEpisode');
-    it.todo('deleteEpisode');
   });
 
   describe('createAccount', () => {
@@ -91,10 +97,7 @@ describe('User Module', () => {
 
   describe('login', () => {
     it('should login with correct credentials', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `
+      return publicTest(`
         mutation{
           login(input:{
             email:"${testUser.eamil}"
@@ -104,8 +107,7 @@ describe('User Module', () => {
             error
             token
           }
-        }`,
-        })
+        }`)
         .expect(200)
         .expect((res) => {
           const {
@@ -174,7 +176,6 @@ describe('User Module', () => {
         })
         .expect(200)
         .expect((res) => {
-          console.log('res', res);
           const {
             body: {
               data: {
@@ -211,7 +212,6 @@ describe('User Module', () => {
         })
         .expect(200)
         .expect((res) => {
-          console.log('res', res);
           const {
             body: {
               data: {
@@ -325,5 +325,106 @@ describe('User Module', () => {
             });
         });
     });
+  });
+
+  describe('Podcasts Resolver', () => {
+    describe('createPodcast', () => {
+      it('should crate podcast', () => {
+        return privateTest(`mutation{
+          createPodcast(input:{
+            title:"${testPodcast.title}"
+            category:"${testPodcast.category}"
+            rating:${testPodcast.rating}
+          }) {
+            ok
+            error
+          }
+        }`)
+          .expect(200)
+          .expect((res) => {
+            const {
+              body: {
+                data: {
+                  createPodcast: { ok, error },
+                },
+              },
+            } = res;
+            expect(ok).toBe(true);
+            expect(error).toBe(null);
+          });
+      });
+    });
+    describe('getPodcasts', () => {
+      let podcastId: number;
+      beforeAll(async () => {
+        const [podcast] = await podcastsRepository.find();
+        podcastId = podcast.id;
+      });
+      it('should find all podcast', () => {
+        return privateTest(`{
+          allPodcasts {
+            ok
+            error
+            result {              
+              title
+            }
+          }
+        }`)
+          .expect(200)
+          .expect((res) => {
+            const {
+              body: {
+                data: {
+                  allPodcasts: {
+                    ok,
+                    error,
+                    result: [podcast],
+                  },
+                },
+              },
+            } = res;
+
+            expect(ok).toBe(true);
+            expect(error).toBe(null);
+            expect(podcast.title).toBe(testPodcast.title);
+          });
+      });
+      it('should find a podcast', () => {
+        return privateTest(`{
+          podcast(input:{
+            id: ${podcastId}
+          }) {
+            ok
+            error
+            result {
+              id
+            }
+          }
+        }`)
+          .expect(200)
+          .expect((res) => {
+            const {
+              body: {
+                data: {
+                  podcast: {
+                    ok,
+                    result: { id },
+                  },
+                },
+              },
+            } = res;
+
+            expect(ok).toBe(true);
+            expect(id).toBe(podcastId);
+          });
+      });
+    });
+    it.todo('getPodcast');
+    it.todo('getEpisodes');
+    it.todo('deletePodcast');
+    it.todo('updatePodcast');
+    it.todo('createEpisode');
+    it.todo('updateEpisode');
+    it.todo('deleteEpisode');
   });
 });

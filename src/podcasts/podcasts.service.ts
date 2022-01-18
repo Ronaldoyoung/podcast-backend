@@ -68,7 +68,7 @@ export class PodcastsService {
       }
       return {
         ok: true,
-        podcast,
+        result: podcast,
       };
     } catch {
       return returnFalseWithErrorMessage('Could not find podcast');
