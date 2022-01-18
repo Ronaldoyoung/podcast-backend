@@ -12,6 +12,7 @@ const testUser = {
 
 describe('User Module', () => {
   let app: INestApplication;
+  let jwtToken: string;
 
   beforeAll(async () => {
     const moudle = await Test.createTestingModule({
@@ -83,9 +84,69 @@ describe('User Module', () => {
         });
     });
   });
+
+  describe('login', () => {
+    it('should login with correct credentials', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+        mutation{
+          login(input:{
+            email:"${testUser.eamil}"
+            password: "${testUser.password}"    
+          }){
+            ok
+            error
+            token
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: { login },
+            },
+          } = res;
+          expect(login.ok).toBe(true);
+          expect(login.error).toBe(null);
+          expect(login.token).toEqual(expect.any(String));
+        });
+    });
+    it('should not be able to login with wrong credentials', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+        mutation{
+          login(input:{
+            email:"${testUser.eamil}"
+            password: "11212121"    
+          }){
+            ok
+            error
+            token
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: { login },
+            },
+          } = res;
+          expect(login.ok).toBe(false);
+          expect(login.error).toBe('Wrong Password');
+          expect(login.token).toBe(null);
+          jwtToken = login.token;
+        });
+    });
+  });
+
   describe('Users Resolver', () => {
     it.todo('userProfile');
-    it.todo('login');
     it.todo('me');
     it.todo('editProfile');
   });
