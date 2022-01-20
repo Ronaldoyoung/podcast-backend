@@ -418,10 +418,32 @@ describe('User Module', () => {
             expect(id).toBe(podcastId);
           });
       });
+      it('should delete a podcast', () => {
+        return privateTest(`
+        mutation{
+          deletePodcast(input:{
+            podcastId: ${podcastId}
+          }){
+            ok
+            error
+          }
+        }`)
+          .expect(200)
+          .expect((res) => {
+            const {
+              body: {
+                data: {
+                  deletePodcast: { ok, error },
+                },
+              },
+            } = res;
+            expect(ok).toBe(true);
+            expect(error).toBe(null);
+          });
+      });
     });
-    it.todo('getPodcast');
+
     it.todo('getEpisodes');
-    it.todo('deletePodcast');
     it.todo('updatePodcast');
     it.todo('createEpisode');
     it.todo('updateEpisode');
