@@ -418,6 +418,30 @@ describe('User Module', () => {
             expect(id).toBe(podcastId);
           });
       });
+      it('should update a pocast', () => {
+        const NEW_TITLE = 'newTitle';
+        return privateTest(`mutation{
+          editPodcast(input:{
+            podcastId:${podcastId}
+            title:"${NEW_TITLE}"
+          }){
+            ok
+            error
+          }
+        }`)
+          .expect(200)
+          .expect((res) => {
+            const {
+              body: {
+                data: {
+                  editPodcast: { ok, error },
+                },
+              },
+            } = res;
+            expect(ok).toBe(true);
+            expect(error).toBe(null);
+          });
+      });
       it('should delete a podcast', () => {
         return privateTest(`
         mutation{
@@ -444,7 +468,6 @@ describe('User Module', () => {
     });
 
     it.todo('getEpisodes');
-    it.todo('updatePodcast');
     it.todo('createEpisode');
     it.todo('updateEpisode');
     it.todo('deleteEpisode');
