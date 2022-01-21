@@ -6,8 +6,6 @@ import { getConnection, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
-import { rmSync } from 'fs';
-import { Expose } from 'class-transformer';
 
 const GRAPHQL_ENDPOINT = '/graphql';
 const testUser = {
